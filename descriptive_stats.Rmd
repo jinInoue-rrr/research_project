@@ -1,0 +1,169 @@
+---
+title: "OECD-descriptive_stats"
+output: html_document
+date: '2022-10-27'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(pacman)
+p_load(ggplot2, ggthemes, ggtext, tidyverse, naniar, haven, gtsummary, ggfocus)
+```
+
+```{r fertility_rates}
+
+df <- read_csv("/Users/tidyjin/scripts/research_project/DP_LIVE_27102022121423101.csv")
+df
+df %>% pull(LOCATION) %>% unique()#54国
+
+naniar::miss_var_summary(df)
+df %>% glimpse()
+
+fertility_rates_graph <- df %>% 
+  mutate(year = TIME, fertility_rate = Value, country = factor(LOCATION)) %>% 
+  ggplot(aes(x = year, y = fertility_rate, color = country, alpha = country)) + 
+  geom_line(aes(color = country)) +
+  scale_color_focus(c("JPN", "USA", "GBR", "AUS"), color_other = "gray")+
+  scale_alpha_focus(c("JPN", "USA", "GBR", "AUS"), alpha_other = 0.3)+
+  labs(caption = "OECD (2022), Fertility rates (indicator). doi: 10.1787/8272fb01-en (Accessed on 27 October 2022)")+
+  theme_stata()
+
+fertility_rates_graph
+
+ggsave("OECD_fertility_rates.png", plot = fertility_rates_graph)
+
+help(ggsave)
+
+```
+
+```{r elderly_population}
+
+df_elderly <- read_csv("/Users/tidyjin/scripts/research_project/DP_LIVE_27102022130829054.csv")
+
+df_elderly %>% glimpse()
+df_elderly %>% pull(LOCATION) %>% unique()
+
+OECD_countries <- df_elderly %>% pull(LOCATION) %>% 
+
+elderly <- df_elderly %>% 
+  mutate(country = factor(LOCATION), year = TIME, elder_pop_rate = Value) %>% 
+  ggplot(aes(x = year, y = elder_pop_rate, color = country, alpha = country)) + 
+  geom_line(aes(color = country))+
+  scale_color_focus(c("JPN", "USA", "GBR", "AUS"), color_other = "gray")+
+  scale_alpha_focus(c("JPN", "USA", "GBR", "AUS"), alpha_other = 0.3)+
+  labs(caption = "OECD (2022), Elderly population (indicator). doi: 10.1787/8d805ea1-en (Accessed on 27 October 2022)")+
+  theme_stata()
+
+ggsave("OECD_Elderly_pop_rate.png", plot = elderly)
+
+```
+
+
+
+```{r life_expectancy}
+
+df_le <- read_csv("/Users/tidyjin/scripts/research_project/WHO_life_expectancy_at_birth.csv")
+
+OECD_countries
+
+df_le %>% 
+  filter(SpatialDimValueCode %in% c(OECD_countries)) %>% 
+  pull(SpatialDimValueCode) %>% 
+  unique()
+
+df_limited <- df_le %>% 
+  mutate(country = factor(SpatialDimValueCode), year = Period, ALE = Value) %>% 
+  filter(country %in% c(OECD_countries) & Indicator != "Life expectancy at age 60 (years)")
+
+df_limited <- df_limited %>% 
+  dplyr::select(country, year,ALE, Dim1)
+
+
+# male
+
+df_limited %>% 
+  filter(Dim1 == "Male") %>% 
+  group_by(year, country) %>% 
+  ggplot(aes(x = year, y = ALE, color = country, alpha = country)) + 
+  geom_point(aes(color = country))+
+  scale_color_focus(c("JPN", "USA", "GBR", "AUS"), color_other = "gray")+
+  scale_alpha_focus(c("JPN", "USA", "GBR", "AUS"), alpha_other = 0.1)+
+  theme_stata()
+
+
+# female
+
+df_limited %>% 
+  filter(Dim1 == "Female") %>% 
+  group_by(year, country) %>% 
+  ggplot(aes(x = year, y = ALE, color = country, alpha = country)) + 
+  geom_point(aes(color = country))+
+  scale_color_focus(c("JPN", "USA", "GBR", "AUS"), color_other = "gray")+
+  scale_alpha_focus(c("JPN", "USA", "GBR", "AUS"), alpha_other = 0.1)+
+  theme_stata()
+
+# both sexes
+
+df_limited %>% 
+  filter(Dim1 == "Both sexes") %>% 
+  group_by(year, country) %>% 
+  ggplot(aes(x = year, y = ALE, color = country, alpha = country)) + 
+  geom_point(aes(color = country))+
+  scale_color_focus(c("JPN", "USA", "GBR", "AUS"), color_other = "gray")+
+  scale_alpha_focus(c("JPN", "USA", "GBR", "AUS"), alpha_other = 0.1)+
+  theme_stata()
+
+
+
+
+
+
+```
+
+
+
+```{r healthy_le}
+
+df_hale <- read_csv("/Users/tidyjin/scripts/research_project/WHO_healthy_life_expectancy_at_birth.csv")
+
+df_hale %>% glimpse()
+df_hale %>% pull(Indicator) %>% unique()
+
+df_hale_limited <- df_hale %>% 
+  mutate(HALE = Value, country = factor(SpatialDimValueCode), year = Period) %>%
+  filter(country %in% c(OECD_countries) & Indicator == "Healthy life expectancy (HALE) at birth (years)") %>% 
+  dplyr::select(country, year, HALE, Dim1)
+
+df_limited
+df_hale_limited
+
+
+# 結合
+joined <- left_join(df_limited, df_hale_limited, by = c("country", "year", "Dim1"))
+
+joined <- joined %>% 
+  mutate(Diff = ALE - HALE)
+
+diff_expectancy <- joined %>% 
+  ggplot(aes(x = year, y = Diff, color = country, alpha = country)) + 
+  geom_point(aes(color = country)) +
+  facet_wrap(~Dim1) + 
+  scale_color_focus(c("JPN", "USA", "GBR", "AUS"), color_other = "gray")+
+  scale_alpha_focus(c("JPN", "USA", "GBR", "AUS"), alpha_other = 0.1)+
+  labs(caption = "WHO(2022) shorturl.at/IWZ14 (Accessed on 27 October 2022)")+
+  xlab("Diff = ALE - HALE")+
+  theme_stata()
+
+diff_expectancy
+
+ggsave("WHO_diff_expectancy.png", plot = diff_expectancy)
+
+
+```
+
+
+
+
+
+
+
