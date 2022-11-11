@@ -1,0 +1,69 @@
+---
+title: "TWFEwithHTE"
+author: "inoue jin"
+date: '2022-11-10'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(pacman)
+
+p_load(tidyverse, haven, naniar, ggfocus, ggthemes, broom, ivreg, gt, parameters, DIDmultiplegt, TwoWayFEWeights, wooldridge, panelView)
+
+```
+
+```{r}
+
+
+# library("wooldridge")
+# Y = "lwage"
+# G = "nr"
+# T = "year"
+# D = "union"
+# controls = c("hours")
+
+# panelview(turnout ~ policy_edr + policy_mail_in + policy_motor, 
+#           data = turnout, index = c("abb","year"), 
+#           xlab = "Year", ylab = "State")
+
+df <- wooldridge::wagepan
+
+df %>% pull(year) %>% unique()
+
+#1981 ~ 1987
+
+df <- df %>% 
+  dplyr::select(lwage, nr, year, union, hours) %>% 
+  mutate(first_treated = case_when(union == 1 ~ 1))
+
+panelView::panelview(lwage ~ union + hours,
+                     data = df, index = c("nr", "year"),
+                     xlab = "Year", by.timing = TRUE, display.all = TRUE)
+ 
+df %>% glimpse()  
+
+did_multiplegt(df = df, Y = "lwage", G = "nr", T = "year", D = "union")
+
+# D_{i, t-1} = 0, D_{i, t} = 1, D_{i, t+1} = 0なら、D_{it} = 0となるようにしたらしい
+# これは、"As union status is often measured with error"のためらしい
+
+
+
+
+
+
+
+```
+
+
+
+
+```{r}
+
+
+
+
+
+```
+

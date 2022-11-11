@@ -137,7 +137,6 @@ df_hale_limited <- df_hale %>%
 df_limited
 df_hale_limited
 
-
 # 結合
 joined <- left_join(df_limited, df_hale_limited, by = c("country", "year", "Dim1"))
 

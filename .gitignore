@@ -1,4 +1,8 @@
+research_project.Rproj
 .Rproj.user/*
 .DS_Store
 workspace
 *.csv
+.Rproj.user
+.Rhistory
+memo

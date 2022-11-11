@@ -1,0 +1,143 @@
+\documentclass{article}
+\usepackage{bm}
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{subcaption}
+
+
+\theoremstyle{definition}
+\newtheorem{thm}{定理}[section]
+\newtheorem{dfn}[thm]{定義}
+\newtheorem{rem}[thm]{注意}
+
+\begin{document}
+\title{Progress Report:Heterogeneous Impacts of Informal Caregiving on Labor Market Outcomes}
+\author{EM225018 Inoue Jin}
+\maketitle
+
+\section{Introduction}
+\subsection{Why does informal caregiving matter ?}
+
+It is a well-known fact that developed countries are faced with the declining fertility rates and increasing elderly population(Fig 1.(a) and (b)). These trends predict that there are risks of declining labor supply in the long run while the demand of informal caregiving is increasing. Therefore, a substantial proportion of people in middle age will experience the "double burden" of care and employment(Heitmueller, 2007). In other words, most middle-aged workers will have difficulty managing a trade-off among hours worked, leisure and time to help caring. 
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}{0.4\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{OECD_fertility_rates.png}
+        \caption{1.Fertility rates}
+    \end{subfigure}
+    \begin{subfigure}{0.4\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{OECD_Elderly_pop_rate.png}
+        \caption{2.Elderly population rates}
+    \end{subfigure}
+    \caption{declining fertility rates and aging society}
+\end{figure}
+
+Heitmueller(2007) briefly summarizes the potential behavior of carers, assuming that the impact of informal caregiving on labor supply can be decomposed into a substitution effect and income effect(Carmichael and Charles, 1998;2003). If they start to make informal care provision, there will be less time left to work and thus, the reservation wage is raised and they reduce labor supply(substitution effect). In contrast with this, reducing hours worked will also mean a cut in their budgets(income effect). If negative effects are empirically detected, it means that substitution effect is larger than income effect.
+
+\subsection{Literature review}
+
+Lots of literature study the relationship between care and employment status(extensive margin), or hours worked(intensive margin). Most of them found that there are negative correlation between care and extensive margin of work(Bolin et al., 2008; Crespo and Mira, 2010; Ettner, 1996; Heitmueller, 2007; Leigh, 2010; Oshio and Usui, 2018; Pavalko and Artis, 1997; VanHoutven et al., 2013;). Based on the theoretical behavior of caregivers summarised above, whether there are any impacts of caring on some labor force outcomes or not, and if any, what kind of impacts caring actually has are important issues. 
+
+Earlier works using cross-section data show some negative relationships between the responsibility of caring and employment, and work hours respectively.(Muurinen, 1986; Stone and Short, 1990; Arber and Ginn, 1995; Ettner, 1996). As an exception, Wolf and Soldo(1994) analyzing only married women, show no evidence of reduced probabilities to be employed, or of reduced hours worked. Ettner(1996) using the same dataset points out that the negative but insignificant effects on married women may be due to some reasons. First, married women's labor force participation rate is initially lower than other categories. Second, limited sample size may decrease the statistical power to reject the null. Also, they mention that including respondents who care for persons with disabilities other than parents or parents-in-law in the comparison group as "non-caregiver" may dilute caregiving effects.
+
+As is obvious from the nature of informal caregiving as a treatment variable, there is an endogeneity problem because it is considered as a self-selection problem whether individuals assume responsibility for informal care provisions or not. Previous literature deal with this problem by applying instrumental variables, such as the number of disabled people in the household and the age of friends of the respondent(Heitmueller, 2007), indicators meaning that mother or father have bad health, lives far away and deceased, and the number of siblings(Bolin et al., 2008). 
+
+However, some literature show that there is no evidence against the null hypothesis that informal caregiving dummy as a treatment variable can be treated as exogeneous(Bolin et al., 2008; Ciani, 2012, Heitmueller, 2007; Oshio and Usui, 2018; Van Houtven et al., 2013). It is not necessarily true that there is no use in applying IVs to this empirical problem, but it may be true that endogeneity is not the main issue that influences the results to greater degree.
+
+Recent studies using panel data concludes with the existence of negative impacts of informal caregiving on employment(Ciani, 2012; Heitmueller, 2007; Leigh, 2010; Oshio and Usui, 2018;Pavalko and Henderson, 2006; Van Houtven et al., 2013). 
+Especially, Leigh(2010) and Oshio and Usui(2018) report that the estimates of fixed effect estimation are both negative, but they are smaller in its size than those of cross-section OLS.
+
+\section{Expected Contribution}
+
+Expected key contribution of this project is to shed light on the heterogeneity of the impacts of caregiving on labor market outcomes, especially in terms of heterogeneous length of time  in which caregivers are "treated". 
+
+The motivation for focusing on the cohort in which one gets treated for the first time is as follows. Leigh (2010) points out about why the negative estimates obtained from fixed effect estimation are smaller in its size than those from OLS estimation that there is a possibility that the impact of caregiving on labor market outcomes might take several years to manifest itself. As far as I know, previous literature almost use models based on the static two-way fixed effects model, and they evaluate the impact of caregiving only in terms of the average effect of situation that caregivers get treated only once summarized as the two-way fixed effect estimates.
+
+However, caregiving as a treatment is considered to last for several periods of time, because the length of time for which people give provisions of caregiving is assumed to be several years on average. According to the Figure 3 below, the differences of average life expectancy (ALE) and the healthy life expectancy (HALE) are almost in the range of 8 years to 15 years, although there are some heterogeneity across sexes and countries. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\columnwidth]{WHO_diff_expectancy.png}
+    \caption{Difference of ALE and HALE}
+\end{figure}
+
+This difference is roughly expected length of time for which one needs care in some way, and these differences are assumed to increase in both sexes in the future. Thus, the dynamic effects of informal caregiving on the labor market outcomes may be of concern to policy-makers facing with the trade-off between the employment and the increasing demand of informal caregiving. All things considered, there is a need for studying the dynamic relationship between caring and labor market outcomes making the most of the quality of the longitudinal data. This is the main motivation for this research project.
+
+Also, according to the national representative survey about the middle-aged Americans(Caregiving in the U.S., 2020\footnote[1]{https://www.caregiving.org/research/caregiving-in-the-us/caregiving-in-the-us-2020/}), caregivers responded that once they've started to give provisions of caregiving, they have stopped saving(28\%) and they have taken on more debt(23\%), both of which could have longer-term aftereffects on caregiver's financial security into the future, especially if the caregiving lasts for a long time. This also motivates me to study the impacts of informal caregiving on the labor market outcomes like wages or household income.
+
+\section{Data}
+
+In this project, I'm going to use the Health and Retirement Survey (HRS)\footnote[2]{https://hrs.isr.umich.edu/about} in the United States, which is national representative longitudinal survey aimed at middle-aged Americans. This survey is conducted every two years and a large proportion of this dataset is publicly available online. Currently, the waves from 1992 to 2020 are available. The important aspect of this dataset is that Van Houtven et al.(2013) used this dataset, which explored the heterogeneous impacts of informal caregiving on labor market outcomes by tasks and intensity of caregiving. Thus, throughout this project, it is possible to fairly compare results with previous literature, which enables me to put this project in the context of accumulated works on caregiving and employment. Also, the relative larger sample size and detailed time periods (every 2 years) are important properties of this dataset in terms of the feasibility of the estimation.
+
+Variables of interest in this project will be following variables used in Van Houtven et al.(2013). Outcomes are some labor market outcomes, like, paid employment status, hours worked, and wages. Treatment indicators represent the types of caregiving, such as "any type of caring", "intensive caregiver", "chore caregiver", and "personal caregiver".
+
+
+\section{Discussion}
+
+How to specify the model is critical and difficult issue. The baseline model of this analysis is the canonical dynamic two-way fixed effects model below.
+
+\begin{equation*}
+    Y_{i,t} = \alpha_{i} + \lambda_{t} + \sum_{l}\mu_{l}1\{t-E_{i} = l\} + v_{i,t}
+\end{equation*}
+
+However, this type of "event study" specification including leads and lags is said to be contaminated by some bias(Sun and Abraham, 2021). Thus, recent DiD literature proposes new estimation procedures with multiple treatment timings(Callway and Sant'Anna, 2021; Sun and Abraham, 2021; Borusyak et al., 2021) with "staggered adoption design", which means that once individuals get treated, they remain treated until the end of time periods. However, considering the application to this project, staggered adoption assumption may be violated because the longer the time periods of dataset become, the more care-recipients may pass away. In other words, some treatment indicators may switch on and off in this project. 
+
+Such situations are often seen in empirical applications, and thus, some related methods are proposed. De Chaisemartin and D'Haultfœuille (2022) proposes a new DiD estimator for intertemporal treatment effects by extending the event-study approach for binary-and-staggered treatments. Also, Imai et al.(2021) proposes matching methods for panel data allowing multiple units to switch their treatment status multiple times over time. 
+
+
+\begin{thebibliography}{99}
+    \item S. Arber, J. Ginn, Gender Differences in the Relationship between Paid Employment and Informal Care. Work Employ. Soc. 9, 445–471 (1995).
+
+    \item K. Bolin, B. Lindgren, P. Lundborg, Your next of kin or your own career? Caring and working among the 50+ of Europe. J. Health Econ. 27, 718–738 (2008).
+    
+    \item K. Borusyak, X. Jaravel, J. Spiess, Revisiting Event Study Designs: Robust and Efficient Estimation. arXiv [econ.EM] (2021), (available at http://arxiv.org/abs/2108.12419).
+    
+    \item B. Callaway, P. H. C. Sant’Anna, Difference-in-Differences with multiple time periods. J. Econom. 225, 200–230 (2021).
+    
+    \item F. Carmichael, S. Charles, The labour market costs of community care. J. Health Econ. 17, 747–765 (1998).
+    
+    \item F. Carmichael, S. Charles, Benefit payments, informal care and female labour supply. Appl. Econ. Lett. 10, 411–415 (2003).
+    
+    \item E. Ciani, Informal adult care and caregivers’ employment in Europe. Labour Econ. 19, 155–164 (2012).
+    
+    \item L. Crespo, P. Mira, Caregiving to elderly parents and employment status of European mature women. Rev. Econ. Stat. 96, 693–709 (2014).
+    
+    \item C. de Chaisemartin, X. D’Haultfoeuille, Difference-in-Differences Estimators of Intertemporal Treatment Effects. NBER Working Papers (2022) (available at https://ideas.repec.org//p/nbr/nberwo/29873.html).
+    
+    \item S. L. Ettner, The Opportunity Costs of Elder Care. J. Hum. Resour. 31, 189–205 (1996).
+    
+    \item A. Heitmueller, The chicken or the egg? Endogeneity in labour market participation of informal carers in England. J. Health Econ. 26, 536–559 (2007).
+    
+    \item K. Imai, I. S. Kim, E. H. Wang, Matching methods for causal inference with time‐series cross‐sectional data. Am. J. Pol. Sci. (2021), doi:10.1111/ajps.12685.
+    
+    \item A. Leigh, Informal care and labor market participation. Labour Econ. 17, 140–149 (2010).
+    
+    \item J. M. Muurinen, The economics of informal care. Labor market effects in the National Hospice Study. Med. Care. 24, 1007–1017 (1986).
+    
+    \item T. Oshio, E. Usui, How does informal caregiving affect daughters’ employment and mental health in Japan? J. Jpn. Int. Econ. 49, 1–7 (2018).
+    
+    \item E. K. Pavalko, J. E. Artis, Women’s caregiving and paid work: causal relationships in late midlife. J. Gerontol. B Psychol. Sci. Soc. Sci. 52, S170–9 (1997).
+    
+    \item R. I. Stone, P. F. Short, The competing demands of employment and informal caregiving to disabled elders. Med. Care. 28, 513–526 (1990).
+    
+    \item L. Sun, S. Abraham, Estimating dynamic treatment effects in event studies with heterogeneous treatment effects. J. Econom. 225, 175–199 (2021).
+    
+    \item C. H. Van Houtven, N. B. Coe, M. M. Skira, The effect of informal care on work and wages. J. Health Econ. 32, 240–252 (2013).
+    
+    \item D. A. Wolf, B. J. Soldo, Married Women’s Allocation of Time to Employment and Care of Elderly Parents. J. Hum. Resour. 29, 1259–1276 (1994).
+\end{thebibliography}
+
+
+\end{document}
+
+
+
+
+
+
+
