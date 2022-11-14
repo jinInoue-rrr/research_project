@@ -9,7 +9,9 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(pacman)
 
-p_load(tidyverse, haven, naniar, ggfocus, ggthemes, broom, ivreg, gt, parameters, DIDmultiplegt, TwoWayFEWeights, wooldridge, panelView)
+p_load(tidyverse, haven, naniar, ggfocus, ggthemes, broom, ivreg, gt, parameters, DIDmultiplegt, TwoWayFEWeights, wooldridge, panelView, bacondecomp, lmtest, multiwayvcov, plm,lfe,miceadds,estimatr, clubSandwich)
+
+
 
 ```
 
@@ -28,39 +30,221 @@ p_load(tidyverse, haven, naniar, ggfocus, ggthemes, broom, ivreg, gt, parameters
 #           xlab = "Year", ylab = "State")
 
 df <- wooldridge::wagepan
-
-df %>% pull(year) %>% unique()
+df %>% glimpse()
+unique_id <- df %>% pull(nr) %>% unique()
 
 #1981 ~ 1987
 
-df <- df %>% 
-  dplyr::select(lwage, nr, year, union, hours) %>% 
-  mutate(first_treated = case_when(union == 1 ~ 1))
+4360/7
 
-panelView::panelview(lwage ~ union + hours,
-                     data = df, index = c("nr", "year"),
+df$nr==13
+
+df_selected <- df %>% 
+  dplyr::select(lwage, nr, year, union, hours)
+
+# formula1 <- "union ~ factor(nr) + factor(year)"
+# formula2 <- "lwage ~ factor(nr) + factor(year)"
+
+panel <- panelView::panelview(lwage ~ union + hours,
+                     data = df_selected, index = c("nr", "year"),
                      xlab = "Year", by.timing = TRUE, display.all = TRUE)
- 
-df %>% glimpse()  
 
-did_multiplegt(df = df, Y = "lwage", G = "nr", T = "year", D = "union")
+
+
+output <- did_multiplegt(df = df_selected, Y = "lwage", G = "nr", T = "year", D = "union")
+
 
 # D_{i, t-1} = 0, D_{i, t} = 1, D_{i, t+1} = 0なら、D_{it} = 0となるようにしたらしい
+# 1,0,1も111にreplaceしたらしい
 # これは、"As union status is often measured with error"のためらしい
 
+```
+
+
+```{r converting}
+
+# de Chaisemartin and D'Haultfœuille(2020)のreplicationでは
+# 101を111に
+# 010を000に変換することが必要
+
+## ()&&()&&()の間にspaceを入れてはいけない
+# 動いた
+converter <- function(df){
+  dat <- data.frame(df)
+  for (i in c(1980,1981,1982,1983,1984,1985)){
+    j <- i + 1
+    k <- i + 2
+    if ((dat[dat$year==i,]$union == 0)&&(dat[dat$year==j,]$union == 1)&&(dat[dat$year==k,]$union == 0)){
+      dat[dat$year==j,]$union <- 0
+      # print("TRUE")
+    }
+    else if((dat[dat$year==i,]$union == 1)&&(dat[dat$year==j,]$union == 0)&&(dat[dat$year==k,]$union == 1)){
+      dat[dat$year==j,]$union <- 1
+      # print("TRUE")
+    }
+    else{
+     next
+    }
+  }
+  return(dat)
+}
 
 
 
+nested <- df_selected %>% 
+  group_by(nr) %>% 
+  nest()
+
+df13 <- nested %>% 
+  filter(nr == 13) %>% 
+  unnest()
+df13
+
+
+mod_df <- nested %>%
+  mutate(new = map(.x = data,~converter(df = .x))) %>% 
+  unnest() %>% 
+  dplyr::select(nr, year, union,union1,hours,lwage)
+
+mod_df
+df_selected
+
+
+help(plm)
 
 
 
 ```
 
 
+```{r simpleTWFE}
+
+# simple TWFE(static) before modification
+
+twfe <- lm(lwage ~ union + factor(year) + factor(nr),
+           data = df_selected,)
+
+# After modification TWFE
+
+mod_twfe <- lm(lwage ~ union1 + factor(nr) + factor(year), data = mod_df)
+
+tidy(mod_twfe)
+
+# clustered at individual level:{miceadds}
+# tidy使えない
+
+mod_clustered <- mod_df %>% 
+  mutate(id = factor(nr)) %>% 
+  lm.cluster(lwage ~ union1 + factor(nr) + factor(year), cluster = "id")
+
+summary((mod_clustered))
 
 
-```{r}
+# clustered at individual level:{estimatr}
 
+
+#CR0:faster
+
+mod_clustered_cr0 <- lm_robust(lwage ~ union1,fixed_effects = ~ nr + year,se_type = "CR0",clusters = factor(nr),data = mod_df)
+
+twfe_CR0 <- tidy(mod_clustered_cr0)
+
+
+#CR2:slower(default)
+
+mod_clustered_cr2 <- lm_robust(lwage ~ union1,fixed_effects = ~ nr + year,se_type = "CR2",clusters = factor(nr),data = mod_df)
+
+twfe_CR2 <- tidy(mod_clustered_cr2)
+twfe_CR2
+
+
+#First Difference estimator:
+
+fd <- plm(formula = lwage ~ union1, effect = "individual", model = "fd",index = c("nr", "year"),data = mod_df)
+
+tidy(fd)
+
+fd_cr2 <- coeftest(fd, vcov = function(x) clubSandwich::vcovCR(x,type = "CR2",cluster = "nr"))
+
+fd_cr2
+
+
+```
+
+
+```{r no}
+
+
+# これはうまくいく
+
+for (i in c(1980,1981,1982,1983,1984,1985)){
+  j <- i+1
+  k <- i+2
+  if ((df13[df13$year==i,]$union == 0) && (df13[df13$year==j,]$union == 1) && (df13[df13$year==k,]$union == 0)){
+    df13[df13$year==j,]$union <- 0
+    # print("TRUE")
+  }
+}
+
+
+df13[df13$year==1981,]$union
+
+
+
+df13 %>% 
+  mutate(new = map(.x = .$year, .f = function(x){}))
+
+try(mini(t = year, d = union, data = df13))
+
+1980:1985 %>% str()
+df13 %>% glimpse()
+df13[df13$year==1980,]$union == 0 %>% str()
+
+
+if (all((df13[df13$year==1980,]$union == 0) && (df13[df13$year==1981,]$union == 1) && (df13[df13$year==1982,]$union == 0))){
+  df13[df13$year==1981,]$union <- 0
+}else{print("No")}
+df13
+
+
+
+df13$year %>% str()
+
+```
+
+
+```{r weights}
+
+library(TwoWayFEWeights)
+
+result <- twowayfeweights(df = df_selected, Y = "lwage", G = "nr", T = "year", D = "union", 
+                cmd_type = "feTR",controls = c("hours"))
+
+result %>% glimpse()
+# 
+# library(ggplot2)
+
+result %>% 
+  ggplot()+
+  geom_histogram(mapping = aes(x = weight),
+                 binwidth = 0.00002)+
+  scale_x_continuous(breaks = seq(-0.003, 0.003, 0.0005)) + 
+  theme_stata()+
+  labs(title = "weights of Vella and Verbeek(1998)")
+
+df_selected %>% glimpse()
+
+# df_selected %>% 
+#   dplyr::select(year, union, nr) %>% 
+#   group_by(nr) %>% 
+#   nest() %>% 
+#   mutate(treat = map(.x = ))
+
+
+result %>% 
+  filter(weight<0) %>% 
+  pull(weight) %>% 
+  sum()
 
 
 
